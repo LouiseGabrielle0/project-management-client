@@ -1,23 +1,37 @@
-import logo from './logo.svg';
 import './App.css';
+import Navbar from './components/Navbar';
+import { Route, Routes } from 'react-router-dom';
+import axios from 'axios'
+import {useEffect, useState} from 'react'
+import ProjectList from './components/ProjectList'
+import NewProject from './components/NewProject'
 
 function App() {
+
+  const [projects, setProjects] = useState(null)
+
+
+
+
+useEffect(() => {
+  axios.get(`${process.env.REACT_APP_API_URL}/projects`)
+  .then(response => {
+    setProjects(response.data)
+    console.log(projects)
+  })
+  .catch(e => console.log("Error getting projects from API", e))
+}, []);
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Navbar />
+
+      <Routes>
+        <Route path='/' element={<h1>Welcome</h1>} />
+        <Route path='/projects' element={<ProjectList projects={projects} />} />
+        <Route path='/projects/create' element={<NewProject/>} />
+      </Routes>
     </div>
   );
 }
